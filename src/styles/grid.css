@@ -97,8 +97,8 @@
   z-index: 1;
   padding: 3px 7px;
   border-radius: 999px;
-  background: rgb(0 0 0 / 0.55);
-  backdrop-filter: blur(6px);
+  /* no backdrop-filter: it forces an offscreen blur pass per card, 500 of them, on every scroll frame */
+  background: rgb(0 0 0 / 0.62);
   color: #fff;
   font: 500 13px/1.2 var(--edge);
   letter-spacing: 0.06em;

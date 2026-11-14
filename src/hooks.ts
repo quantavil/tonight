@@ -76,7 +76,13 @@ export function useDetail(all: Title[], shown: Title[]) {
     [shown, idx],
   );
 
-  return { openId, current, open, close, step, hasPrev: idx > 0, hasNext: idx >= 0 && idx < shown.length - 1 };
+  /** Show another title in the open view without adding a history step. */
+  const swap = useCallback((t: Title) => {
+    history.replaceState({ open: t.id, depth: depthOf() }, '', location.href);
+    setOpenId(t.id);
+  }, []);
+
+  return { openId, current, open, swap, close, step, hasPrev: idx > 0, hasNext: idx >= 0 && idx < shown.length - 1 };
 }
 
 /** A message that clears itself. A newer message restarts the timer. */

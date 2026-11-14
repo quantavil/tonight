@@ -35,6 +35,7 @@ export interface Title {
   trailer: number;
   seasons: number;
   episodes: number;
+  tmdb: number; // TMDB id, 0 unknown
   hay: string; // normalized search text
 }
 
@@ -97,6 +98,7 @@ export function decode(f: TitlesFile): Dataset {
       trailer: f.tr[i]!,
       seasons: f.se[i]!,
       episodes: f.ep[i]!,
+      tmdb: f.tm[i]!,
     };
     return { ...t, hay: makeHay(t) };
   });

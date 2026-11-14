@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'preact/hooks';
 import { LIGHT_DISMISS, useModal } from './dialog.ts';
 import { fmtMins, fmtMoney, fmtRating, fmtVotes, fmtYears, posterUrl, typeLabel, type Title } from './data.ts';
 import type { Query } from './filter.ts';
-import { Bookmark, Check, Close, External, Left, Right, Star } from './icons.tsx';
+import { Bookmark, Check, Close, Dice, External, Left, Right, Star } from './icons.tsx';
 import type { Mark } from './marks.ts';
 
 interface Props {
@@ -14,13 +14,29 @@ interface Props {
   onClose: () => void;
   onFilter: (patch: Partial<Query>) => void;
   onStep: (d: -1 | 1) => void;
+  /** Why Surprise me chose this title; empty when the title was opened any other way. */
+  why: string;
+  onAnother: () => void;
   hasPrev: boolean;
   hasNext: boolean;
 }
 
 const plural = (n: number, word: string) => `${n.toLocaleString()} ${word}${n === 1 ? '' : 's'}`;
 
-export function Detail({ t, similar, onOpen, mark, onMark, onClose, onFilter, onStep, hasPrev, hasNext }: Props) {
+export function Detail({
+  t,
+  similar,
+  onOpen,
+  mark,
+  onMark,
+  onClose,
+  onFilter,
+  onStep,
+  hasPrev,
+  hasNext,
+  why,
+  onAnother,
+}: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const body = useRef<HTMLDivElement>(null);
   useModal(dialog, onClose);
@@ -58,6 +74,14 @@ export function Detail({ t, similar, onOpen, mark, onMark, onClose, onFilter, on
         </button>
       </header>
       <div class="db" ref={body}>
+        {why && (
+          <p class="why">
+            <Dice /> <span>{why}</span>
+            <button class="btn" onClick={onAnother}>
+              Another
+            </button>
+          </p>
+        )}
         <div class="top">
           {t.poster && <img class="pic" src={posterUrl(t.poster, 400)} width="200" height="296" alt="" />}
           <div>
@@ -216,6 +240,16 @@ export function Detail({ t, similar, onOpen, mark, onMark, onClose, onFilter, on
               rel="noopener noreferrer"
             >
               Trailer <External />
+            </a>
+          )}
+          {(t.type === 1 || t.type === 3) && t.tmdb > 0 && (
+            <a
+              class="btn link"
+              href={`https://seriesgraph.com/show/${t.tmdb}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ratings <External />
             </a>
           )}
           <a class="btn link" href={`https://www.imdb.com/title/${t.id}/`} target="_blank" rel="noopener noreferrer">

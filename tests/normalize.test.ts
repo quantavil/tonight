@@ -79,6 +79,7 @@ describe('toRow', () => {
       trailer: 3877612057,
       seasons: 5,
       episodes: 62,
+      tmdb: 0, // filled in later by scripts/tmdb.ts
     });
   });
   it('throws on a value of the wrong type, so a changed schema never reaches the data', () => {

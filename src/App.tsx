@@ -5,10 +5,11 @@ import { Pager } from './Pager.tsx';
 import { NO_DICTS, load, makeHay, type Dataset, type Title } from './data.ts';
 import { filterTitles } from './filter.ts';
 import { PAGE_SIZE, useDetail, usePage, useQueryState, useToast } from './hooks.ts';
-import { Gear, Search } from './icons.tsx';
+import { Dice, Gear, Search } from './icons.tsx';
 import { downloadMarks, useMarks } from './marks.ts';
 import { Settings } from './Settings.tsx';
 import { useSettings } from './settings.ts';
+import { surprise } from './surprise.ts';
 import { Toolbar } from './Toolbar.tsx';
 
 /** Titles that dropped out of the top list stay reachable through their mark snapshot. */
@@ -29,6 +30,8 @@ export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [toast, flash] = useToast();
   const search = useRef<HTMLInputElement>(null);
+  const [lucky, setLucky] = useState<{ id: string; why: string } | null>(null);
+  const recent = useRef(new Set<string>());
 
   useEffect(() => {
     load().then(setData, (e) => setError(String(e)));
@@ -39,6 +42,15 @@ export function App() {
   const detail = useDetail(all, shown);
   const { current, openId } = detail;
   const { page, pages, from, setPage } = usePage(shown.length, q, current ? shown.indexOf(current) : -1);
+  const surpriseMe = () => {
+    const go = () => surprise(all, all, marks, recent.current);
+    const pick = go() ?? (recent.current.clear(), go());
+    if (!pick) return flash('Nothing left to suggest.');
+    recent.current.add(pick.title.id);
+    setLucky({ id: pick.title.id, why: pick.why });
+    if (current) detail.swap(pick.title);
+    else detail.open(pick.title);
+  };
   const similar = useMemo(() => {
     if (!current) return [];
     const byId = new Map(all.map((t) => [t.id, t]));
@@ -58,7 +70,8 @@ export function App() {
         return;
       }
       if (typing || el.closest('.pop')) return;
-      if (e.key === '/') {
+      if (e.key === 'r' && data) surpriseMe();
+      else if (e.key === '/') {
         e.preventDefault();
         search.current?.focus();
       } else if (current) {
@@ -70,7 +83,7 @@ export function App() {
     };
     addEventListener('keydown', onKey);
     return () => removeEventListener('keydown', onKey);
-  }, [current, settingsOpen, detail.step, toggle]);
+  }, [current, settingsOpen, detail.step, toggle, data, all, marks]);
 
   const onImport = async (file: File) => {
     try {
@@ -116,6 +129,15 @@ export function App() {
                 /
               </kbd>
             </label>
+            <button
+              class="icon dice"
+              aria-label="Surprise me"
+              title="Surprise me (r)"
+              disabled={!data}
+              onClick={surpriseMe}
+            >
+              <Dice />
+            </button>
             <button
               class="icon gear"
               aria-label="Settings"
@@ -178,6 +200,8 @@ export function App() {
           onStep={detail.step}
           hasPrev={detail.hasPrev}
           hasNext={detail.hasNext}
+          why={lucky?.id === current.id ? lucky.why : ''}
+          onAnother={surpriseMe}
         />
       )}
       <div class="toast" role="status">

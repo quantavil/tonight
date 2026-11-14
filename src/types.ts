@@ -61,6 +61,7 @@ export const TitlesSchema = v.pipe(
     tr: ints(), // trailer: number part of IMDb's "vi…" video id, 0 none
     se: ints(), // seasons (series), 0 none
     ep: ints(), // episodes (series), 0 none
+    tm: ints(), // TMDB id: a TV id for series, a movie id otherwise; 0 unknown
   }),
   v.check(
     (f) =>
@@ -102,4 +103,5 @@ export interface Row {
   trailer: number;
   seasons: number;
   episodes: number;
+  tmdb: number; // TMDB id (TV for series, movie otherwise), 0 unknown; filled in by scripts/tmdb.ts
 }

@@ -41,6 +41,7 @@ const f: TitlesFile = {
   tr: [0, 12, 0],
   se: [0, 4, 0],
   ep: [0, 40, 0],
+  tm: [0, 1396, 0],
 };
 const { titles } = decode(f);
 const ids = (q: Partial<typeof DEFAULT>, marks: Marks = {}) =>

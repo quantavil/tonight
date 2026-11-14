@@ -17,7 +17,7 @@ Preact + TypeScript, built with Vite+ (`vp`), Bun as package manager. No backend
 
 ## Data
 
-All data comes from one file, `data/titles.json`, built from IMDb's public GraphQL endpoint. No API key is needed.
+All data comes from one file, `data/titles.json`, built from IMDb's public GraphQL endpoint. TMDB ids (`tm`, used for the SeriesGraph link) come from Wikidata through `scripts/tmdb.ts`. No API key is needed.
 
 - **Build it yourself:** `bun scripts/fetch.ts` (or `bun run fetch`) writes the file. `--limit 200` makes a smaller one; the default size is `LIMIT` in `scripts/fetch.ts`.
 - **Format:** columnar JSON. Each key is a column, and index `i` in every column is the title at IMDb popularity rank `i + 1`, so the order is the rank. Genres and certificates are bitmasks into the `genres` and `certs` lists; languages and countries are index lists. The valibot schema in `src/types.ts` documents every column and is what the fetcher validates against.

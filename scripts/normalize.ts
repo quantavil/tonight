@@ -129,6 +129,7 @@ export function toRow(raw: unknown): Row | null {
     trailer: Number(nodes(n.video)[0]?.id?.replace(/^vi/, '')) || 0,
     seasons: n.episodes?.displayableSeasons?.total ?? 0,
     episodes: n.episodes?.episodes?.total ?? 0,
+    tmdb: 0,
   };
 }
 
@@ -186,6 +187,7 @@ export function toFile(rows: Row[], total: number, generated: string): TitlesFil
     tr: rows.map((r) => r.trailer),
     se: rows.map((r) => r.seasons),
     ep: rows.map((r) => r.episodes),
+    tm: rows.map((r) => r.tmdb),
   };
 }
 

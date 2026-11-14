@@ -12,6 +12,7 @@ import { renameSync } from 'node:fs';
 import { brotliCompressSync } from 'node:zlib';
 import { TYPES, type Row } from '../src/types.ts';
 import { toFile, toRow, validate } from './normalize.ts';
+import { addTmdbIds } from './tmdb.ts';
 
 const HOSTS = ['https://caching.graphql.imdb.com/', 'https://api.graphql.imdb.com/'];
 const arg = (name: string, def: number) => {
@@ -114,11 +115,19 @@ while (rows.length < LIMIT) {
   await sleep(500);
 }
 
+const out = new URL('../data/titles.json', import.meta.url).pathname;
+// TMDB ids come from Wikidata; ones it does not know keep the value from the last file
+const previous = new Map<string, number>();
+try {
+  const old = await Bun.file(out).json();
+  old.id.forEach((id: string, i: number) => old.tm?.[i] && previous.set(id, old.tm[i]));
+} catch {}
+await addTmdbIds(rows, previous);
+
 const file = toFile(rows.slice(0, LIMIT), total, new Date().toISOString());
 validate(file, MIN_COUNT);
 
 const json = JSON.stringify(file);
-const out = new URL('../data/titles.json', import.meta.url).pathname;
 await Bun.write(out + '.tmp', json);
 renameSync(out + '.tmp', out);
 

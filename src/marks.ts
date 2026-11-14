@@ -40,6 +40,7 @@ const SnapSchema: v.GenericSchema<unknown, Snap> = v.object({
   trailer: v.number(),
   seasons: v.number(),
   episodes: v.number(),
+  tmdb: v.optional(v.number(), 0), // snapshots saved before the id existed
 });
 
 const EntrySchema = v.object({ m: v.picklist(['w', 's']), at: v.number(), snap: SnapSchema });

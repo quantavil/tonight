@@ -21,6 +21,7 @@ bunx knip
 5. IMDb caps a query at 10,000 results. With plot and credits, page size max is 500 (1000 fails with "Too much data requested"); the fetcher halves on that error.
 6. Dataset = search `title_type=feature,tv_series,tv_movie,tv_miniseries`, `num_votes=5000,`, adult included. No rating floor (1.0–10.0 valid; 0 is rejected by `validate`).
 7. Introspection is disabled. Guard every optional field (`toRow` does).
+8. TMDB ids (`tm`) come from Wikidata SPARQL (`scripts/tmdb.ts`), never from IMDb or a TMDB key. A missing id stays 0 and keeps its previous value; the UI hides anything that needs it.
 
 ## Data contract
 
